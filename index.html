@@ -5,18 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>¿Un mundo de locos?</title>
     
-    <!-- 1. Cargar Babel para traducir React en el navegador -->
+    <!-- 1. Cargar React y ReactDOM -->
+    <script crossorigin="anonymous" src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin="anonymous" src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- 2. Cargar Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-    <!-- 2. Mapa de importaciones para React -->
-    <script type="importmap">
-    {
-      "imports": {
-        "react": "https://esm.sh/react@18.2.0",
-        "react-dom/client": "https://esm.sh/react-dom@18.2.0/client"
-      }
-    }
-    </script>
 
     <style>
         /* --- Colores y Variables --- */
@@ -42,6 +36,27 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
+        }
+
+        /* Mensaje de error visible */
+        #error-display {
+            display: none;
+            background: #fff;
+            color: red;
+            padding: 20px;
+            border: 4px solid red;
+            margin: 20px;
+            font-weight: bold;
+            font-family: monospace;
+            z-index: 1000;
+        }
+
+        /* Indicador de carga simple */
+        #root:empty::before {
+            content: "Cargando juego...";
+            font-size: 2rem;
+            color: white;
+            margin-top: 50px;
         }
 
         /* --- Título (Pancarta) --- */
@@ -176,14 +191,25 @@
         .chincheta-verde { background-color: green; }
         .chincheta-azul { background-color: blue; }
     </style>
+
+    <!-- Script para capturar errores -->
+    <script>
+        window.onerror = function(message, source, lineno, colno, error) {
+            var display = document.getElementById('error-display');
+            display.style.display = 'block';
+            display.innerHTML += '<p>Error: ' + message + '<br><small>Línea: ' + lineno + '</small></p>';
+            console.error(error);
+        };
+    </script>
 </head>
 <body>
+    <div id="error-display"></div>
     <div id="root"></div>
 
-    <!-- 3. Código de la Aplicación incrustado y procesado por Babel -->
-    <script type="text/babel" data-type="module" data-presets="react,typescript">
-        import React, { useState } from 'react';
-        import { createRoot } from 'react-dom/client';
+    <!-- 3. Lógica de la aplicación -->
+    <script type="text/babel" data-presets="env,react">
+        const { useState } = React;
+        const { createRoot } = ReactDOM;
 
         // --- DATOS ---
         const lugares = [
@@ -245,7 +271,7 @@
           };
 
           return (
-            <>
+            <React.Fragment>
               {/* Título (Pancarta) */}
               <div className="titulo-pancarta">¿Un mundo de locos?</div>
 
@@ -297,7 +323,7 @@
                   </button>
                 </div>
               )}
-            </>
+            </React.Fragment>
           );
         };
 
